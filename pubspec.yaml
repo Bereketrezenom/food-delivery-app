@@ -1,4 +1,4 @@
-name: shop_a_z_user
+name: auth_demo
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -42,7 +42,7 @@ dependencies:
   firebase_messaging:
   firebase_crashlytics:
   cloud_functions:
-  google_sign_in:
+  google_sign_in: ^6.2.2
   provider:
   intl:
   image_picker:
@@ -80,8 +80,7 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-    - /assets/Food-Delivery-App.jpg
+  
    
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
