@@ -53,6 +53,13 @@ dependencies:
   flutter_rating_bar:
   freezed_annotation:
   json_annotation:
+  firebase_core_web: ^2.12.1
+  google: ^0.0.1
+  flutter_toast_message_bar: ^0.0.8
+  fluttertoast: ^8.2.12
+  flutter_svg: ^2.0.17
+  smooth_page_indicator: ^1.2.1
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:
@@ -73,11 +80,12 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
+
+  # Add your assets here
+  assets:
+    
+    - assets/images/
 
   # To add assets to your application, add an assets section, like this:
   

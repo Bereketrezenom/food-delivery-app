@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -17,20 +18,29 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
-        await FirebaseAuth.instance.sendPasswordResetEmail(
-          email: _emailController.text.trim(),
-        );
-        print('Password reset email sent successfully');
+        final email = _emailController.text.trim();
+
+        // Check if email exists in Firestore
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('login')
+            .where('email', isEqualTo: email)
+            .get();
+
+        if (querySnapshot.docs.isEmpty) {
+          _showErrorDialog('No account found with this email.');
+          return;
+        }
+
+        // Proceed with password reset if email exists
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
         _showSuccessDialog();
       } on FirebaseAuthException catch (e) {
-        print('Password reset error: ${e.code}');
         String message = 'An error occurred. Please try again.';
         if (e.code == 'user-not-found') {
           message = 'No user found with this email address';
         }
         _showErrorDialog(message);
       } catch (e) {
-        print('General error: $e');
         _showErrorDialog('An unexpected error occurred');
       } finally {
         setState(() => _isLoading = false);
@@ -88,7 +98,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                'Enter your registered email to receive reset instructions:',
+                'Enter your registered email to receive the reset password',
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 24),

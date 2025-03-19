@@ -15,9 +15,13 @@ class _RegisterPageState extends State<RegisterPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false; // Track loading state
+  bool _obscurePassword = true;
 
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true); // Show loading indicator
+
       try {
         final userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -42,6 +46,8 @@ class _RegisterPageState extends State<RegisterPage> {
         );
       } on FirebaseAuthException catch (e) {
         _showErrorDialog('Registration failed: ${e.message}');
+      } finally {
+        setState(() => _isLoading = false); // Hide loading indicator
       }
     }
   }
@@ -125,26 +131,48 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             ),
                           ),
-                          validator: (value) =>
-                              value!.isEmpty ? 'Please enter email' : null,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter email';
+                            }
+                            if (!RegExp(
+                                    r'^[a-zA-Z0-9._%+-]+@(gmail\.com|email\.com)$')
+                                .hasMatch(value)) {
+                              return 'Enter Valid Email Address';
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 16.0),
                         TextFormField(
                           controller: _passwordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
+                          obscureText: _obscurePassword,
+                          decoration: InputDecoration(
                             hintText: 'Password',
                             filled: true,
-                            fillColor: Color(0xFFF5FCF9),
-                            contentPadding: EdgeInsets.symmetric(
+                            fillColor: const Color(0xFFF5FCF9),
+                            contentPadding: const EdgeInsets.symmetric(
                               horizontal: 24.0,
                               vertical: 16.0,
                             ),
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                               borderSide: BorderSide.none,
                               borderRadius: BorderRadius.all(
                                 Radius.circular(50),
                               ),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
                             ),
                           ),
                           validator: (value) => value!.length < 6
@@ -152,18 +180,20 @@ class _RegisterPageState extends State<RegisterPage> {
                               : null,
                         ),
                         const SizedBox(height: 16.0),
-                        ElevatedButton(
-                          onPressed: _register,
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor:
-                                const Color.fromRGBO(255, 109, 12, 1),
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 48),
-                            shape: const StadiumBorder(),
-                          ),
-                          child: const Text("Sign Up"),
-                        ),
+                        _isLoading
+                            ? const CircularProgressIndicator() // Show loader when registering
+                            : ElevatedButton(
+                                onPressed: _register,
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor:
+                                      const Color.fromRGBO(255, 109, 12, 1),
+                                  foregroundColor: Colors.white,
+                                  minimumSize: const Size(double.infinity, 48),
+                                  shape: const StadiumBorder(),
+                                ),
+                                child: const Text("Sign Up"),
+                              ),
                         const SizedBox(height: 16.0),
                         TextButton(
                           onPressed: () => Navigator.pushReplacement(
@@ -172,12 +202,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                 builder: (context) => const LoginPage()),
                           ),
                           child: Text.rich(
-                            TextSpan(
+                            const TextSpan(
                               text: "Already have an account? ",
                               children: [
                                 TextSpan(
                                   text: "Sign In",
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: Color.fromRGBO(255, 109, 12, 1),
                                   ),
                                 ),

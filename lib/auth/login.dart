@@ -1,9 +1,10 @@
 import 'package:auth_demo/auth/forgotpassword.dart';
+import 'package:auth_demo/auth/register.dart';
+import 'package:auth_demo/screens/homescreen/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../home/home.dart';
-import 'register.dart';
+// For formatting time
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,9 +17,12 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _obscurePassword = true;
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
       try {
         final userCredential =
             await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -32,10 +36,16 @@ class _LoginPageState extends State<LoginPage> {
             .get();
 
         if (doc.exists) {
+          String userName = doc['name'] ?? 'User';
+          String greeting = _getGreeting();
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => Homepage(name: doc['name']),
+              builder: (context) => FoodDeliveryHomePage(
+                name: userName,
+                greeting: greeting, // Pass the greeting
+              ),
             ),
           );
         } else {
@@ -43,7 +53,20 @@ class _LoginPageState extends State<LoginPage> {
         }
       } on FirebaseAuthException catch (e) {
         _showErrorDialog('Login failed: ${e.message}');
+      } finally {
+        setState(() => _isLoading = false);
       }
+    }
+  }
+
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return "Good Morning";
+    } else if (hour < 18) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
     }
   }
 
@@ -111,20 +134,33 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 16.0),
                         TextFormField(
                           controller: _passwordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
+                          obscureText: _obscurePassword,
+                          decoration: InputDecoration(
                             hintText: 'Password',
                             filled: true,
-                            fillColor: Color(0xFFF5FCF9),
-                            contentPadding: EdgeInsets.symmetric(
+                            fillColor: const Color(0xFFF5FCF9),
+                            contentPadding: const EdgeInsets.symmetric(
                               horizontal: 24.0,
                               vertical: 16.0,
                             ),
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                               borderSide: BorderSide.none,
                               borderRadius: BorderRadius.all(
                                 Radius.circular(50),
                               ),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
                             ),
                           ),
                           validator: (value) => value!.length < 6
@@ -133,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 16.0),
                         ElevatedButton(
-                          onPressed: _login,
+                          onPressed: _isLoading ? null : _login,
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
                             backgroundColor:
@@ -142,7 +178,9 @@ class _LoginPageState extends State<LoginPage> {
                             minimumSize: const Size(double.infinity, 48),
                             shape: const StadiumBorder(),
                           ),
-                          child: const Text("Sign In"),
+                          child: _isLoading
+                              ? const CircularProgressIndicator()
+                              : const Text("Sign In"),
                         ),
                         const SizedBox(height: 16.0),
                         TextButton(
@@ -172,12 +210,12 @@ class _LoginPageState extends State<LoginPage> {
                                 builder: (context) => const RegisterPage()),
                           ),
                           child: Text.rich(
-                            TextSpan(
-                              text: "Don’t have an account? ",
+                            const TextSpan(
+                              text: "Don't have an account ",
                               children: [
                                 TextSpan(
                                   text: "Sign Up",
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: Color.fromRGBO(255, 109, 12, 1),
                                   ),
                                 ),
