@@ -1,9 +1,11 @@
+import 'package:auth_demo/screens/cart/cartservices.dart';
+import 'package:flutter/material.dart';
 import 'package:auth_demo/models/dishmodel.dart';
 import 'package:auth_demo/screens/cart/cart.dart';
+
 import 'package:auth_demo/screens/details/dishdiscription.dart';
 import 'package:auth_demo/screens/details/dishimage.dart';
 import 'package:auth_demo/screens/details/top_rounded_container.dart';
-import 'package:flutter/material.dart';
 
 class DishDetailsScreen extends StatelessWidget {
   static const routeName = '/dish-details';
@@ -33,8 +35,8 @@ class DishDetailsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: CircleAvatar(
-              backgroundColor: Colors.white, // Circular background
-              radius: 18, // Adjust the size of the circle
+              backgroundColor: Colors.white,
+              radius: 18,
               child: IconButton(
                 icon: const Icon(
                   Icons.favorite,
@@ -71,18 +73,20 @@ class DishDetailsScreen extends StatelessWidget {
               ),
             ),
             onPressed: () {
+              // ✅ Add dish to cart before navigating
+              CartService().addToCart(dish);
+
+              // ✅ Navigate to cart screen (NO EMPTY LIST!)
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CartScreen(
-                      dish: dish,
-                      cartItems: [],
-                    ),
-                  ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CartScreen(),
+                ),
+              );
             },
-            child: Text(
+            child: const Text(
               'Order now',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
         ),

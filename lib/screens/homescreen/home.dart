@@ -80,7 +80,7 @@ class EmptyCartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text(
         "Your cart is empty",
         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),

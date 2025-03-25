@@ -14,6 +14,7 @@ class Dish {
   final String distance;
   final String size;
   int quantity;
+
   Dish({
     required this.id,
     required this.name,
@@ -30,6 +31,25 @@ class Dish {
     required this.size,
     this.quantity = 1,
   });
+
+  Dish copyWith({int? quantity}) {
+    return Dish(
+      id: id,
+      name: name,
+      description: description,
+      image: image,
+      images: images,
+      price: price,
+      cookingTime: cookingTime,
+      rating: rating,
+      isFavorite: isFavorite,
+      kcal: kcal,
+      restaurantName: restaurantName,
+      distance: distance,
+      size: size,
+      quantity: quantity ?? this.quantity,
+    );
+  }
 }
 
 List<Dish> demoDishes = [
@@ -75,3 +95,4 @@ List<Dish> demoDishes = [
     size: '',
   ),
 ];
+List<Dish> cartItems = [];
