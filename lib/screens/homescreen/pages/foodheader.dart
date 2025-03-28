@@ -1,13 +1,4 @@
-import 'package:auth_demo/models/dishmodel.dart';
-import 'package:auth_demo/screens/cart/cart.dart';
-import 'package:auth_demo/screens/cart/cartservices.dart';
-import 'package:auth_demo/screens/details/additionaldetail.dart';
-import 'package:auth_demo/screens/details/dishdetal.dart';
-import 'package:auth_demo/screens/details/dishdiscription.dart';
-import 'package:auth_demo/screens/details/dishimage.dart';
-import 'package:auth_demo/screens/details/top_rounded_container.dart';
 import 'package:auth_demo/screens/homescreen/pages/searchfield.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 
 class FoodHeader extends StatelessWidget {

@@ -135,10 +135,11 @@ class _RegisterPageState extends State<RegisterPage> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter email';
                             }
-                            if (!RegExp(
-                                    r'^[a-zA-Z0-9._%+-]+@(gmail\.com|email\.com)$')
-                                .hasMatch(value)) {
-                              return 'Enter Valid Email Address';
+                            // Validate email format (only gmail.com or email.com allowed)
+                            final emailRegex = RegExp(
+                                r'^[a-zA-Z0-9._%+-]+@(gmail\.com|email\.com)$');
+                            if (!emailRegex.hasMatch(value)) {
+                              return 'please use valid format';
                             }
                             return null;
                           },

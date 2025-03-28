@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.example.food_delivery"
-    compileSdk = 35 // Change as per Flutter's compileSdkVersion
+    compileSdk = 35 // Change as per Flutter's compileSdkersion
 
     ndkVersion = "27.0.12077973" // Make sure this is the correct version
 
@@ -35,6 +35,7 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+    
 }
 
 flutter {
