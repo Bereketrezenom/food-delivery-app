@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:auth_demo/models/dishmodel.dart';
 import 'package:auth_demo/screens/cart/cart_summary.dart';
 import 'package:auth_demo/screens/cart/cartitemcard.dart';
-
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
 
@@ -32,7 +31,7 @@ class _CartScreenState extends State<CartScreen> {
         ],
       ),
       body: cartItems.isEmpty
-          ? const Center(child: Text("Your cart is empty"))
+          ? const Center(child: Text("is empty"))
           : Column(
               children: [
                 Expanded(
@@ -66,8 +65,16 @@ class _CartScreenState extends State<CartScreen> {
                   subtotal: cartService.calculateSubtotal(),
                   shippingFee: shippingFee,
                   total: cartService.calculateTotal(shippingFee),
+                  cartItems: cartService.cartItems,
                   onCheckout: () {
-                    // Implement checkout logic
+                    // Clear cart after checkout
+                    setState(() {
+                      for (int i = cartService.cartItems.length - 1;
+                          i >= 0;
+                          i--) {
+                        cartService.removeItem(i);
+                      }
+                    });
                   },
                 ),
               ],

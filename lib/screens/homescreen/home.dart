@@ -1,17 +1,27 @@
+import 'package:auth_demo/models/dishmodel.dart';
 import 'package:auth_demo/screens/cart/cart.dart';
+import 'package:auth_demo/screens/cart/cartservices.dart';
+import 'package:auth_demo/screens/details/additionaldetail.dart';
+import 'package:auth_demo/screens/details/dishdetal.dart';
+import 'package:auth_demo/screens/details/dishdiscription.dart';
+import 'package:auth_demo/screens/details/dishimage.dart';
+import 'package:auth_demo/screens/details/top_rounded_container.dart';
 import 'package:auth_demo/screens/homescreen/pages/banner.dart';
 import 'package:auth_demo/screens/homescreen/pages/dishcard.dart';
 import 'package:auth_demo/screens/homescreen/pages/foodcatagories.dart';
 import 'package:auth_demo/screens/homescreen/pages/foodheader.dart';
+import 'package:auth_demo/screens/order/order.dart';
 import 'package:auth_demo/screens/profile/profile.dart';
-import 'package:auth_demo/screens/order/order.dart'; // New OrderPage import
 import 'package:flutter/material.dart';
 
 class FoodDeliveryHomePage extends StatefulWidget {
+  final int initialTabIndex;
+
   const FoodDeliveryHomePage({
     super.key,
     required String name,
     required String greeting,
+    this.initialTabIndex = 0,
   });
 
   @override
@@ -19,14 +29,20 @@ class FoodDeliveryHomePage extends StatefulWidget {
 }
 
 class _FoodDeliveryHomePageState extends State<FoodDeliveryHomePage> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
 
-  // List of pages for each tab (home, cart, profile, order)
+  @override
+  void initState() {
+    super.initState();
+    // Use the initialTabIndex if provided, otherwise default to 0 (home)
+    _selectedIndex = widget.initialTabIndex;
+  }
+
+  // List of pages for each tab (home, order, profile)
   final List<Widget> _pages = [
     const HomePageContent(), // Home tab content
-    const EmptyCartScreen(), // Placeholder for Cart tab content
+    const OrderPage(), // Order tab content
     const ProfilePage(), // Profile tab content
-    const OrderPage(), // Order tab content (new page)
   ];
 
   void _onItemTapped(int index) {
@@ -39,10 +55,13 @@ class _FoodDeliveryHomePageState extends State<FoodDeliveryHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: _pages[_selectedIndex], // Display selected page
-        ),
+        child: _selectedIndex == 0
+            ? SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: _pages[_selectedIndex], // Display home page with scroll
+              )
+            : _pages[
+                _selectedIndex], // Display other pages without scroll wrapper
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -51,14 +70,12 @@ class _FoodDeliveryHomePageState extends State<FoodDeliveryHomePage> {
             Colors.orange, // Set the selected item color to orange
         unselectedItemColor:
             Colors.grey, // Set the unselected item color to grey
+        type: BottomNavigationBarType
+            .fixed, // Ensures all items are always visible
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.restaurant_menu),
@@ -74,21 +91,6 @@ class _FoodDeliveryHomePageState extends State<FoodDeliveryHomePage> {
   }
 }
 
-// Placeholder for Cart tab content when no dish is selected
-class EmptyCartScreen extends StatelessWidget {
-  const EmptyCartScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        "Your cart is empty",
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
 class HomePageContent extends StatelessWidget {
   const HomePageContent({super.key});
 
@@ -96,7 +98,9 @@ class HomePageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: [
-        FoodHeader(),
+        FoodHeader(
+          username: '', // Replace with actual username when implemented
+        ),
         FoodCategories(),
         FoodDiscountBanner(),
         SizedBox(height: 20),

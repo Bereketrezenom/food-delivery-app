@@ -60,6 +60,9 @@ dependencies:
   flutter_svg: ^2.0.17
   smooth_page_indicator: ^1.2.1
   carousel_slider: ^4.2.1
+  flutter_screenutil: ^5.9.3
+  flutter_launcher_icons: ^0.14.3
+  
 
 dev_dependencies:
   flutter_test:

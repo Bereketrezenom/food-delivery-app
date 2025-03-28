@@ -1,4 +1,13 @@
+import 'package:auth_demo/models/dishmodel.dart';
+import 'package:auth_demo/screens/cart/cart.dart';
+import 'package:auth_demo/screens/cart/cartservices.dart';
+import 'package:auth_demo/screens/details/additionaldetail.dart';
+import 'package:auth_demo/screens/details/dishdetal.dart';
+import 'package:auth_demo/screens/details/dishdiscription.dart';
+import 'package:auth_demo/screens/details/dishimage.dart';
+import 'package:auth_demo/screens/details/top_rounded_container.dart';
 import 'package:auth_demo/screens/homescreen/pages/searchfield.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 
 class FoodHeader extends StatelessWidget {
@@ -20,7 +29,6 @@ class FoodHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String greeting = _getGreeting();
-    String displayName = username ?? "Guest"; // Default to "Guest" if null
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -113,7 +121,7 @@ class FoodHeader extends StatelessWidget {
                     color: Colors.black87,
                   ),
               children: [
-                TextSpan(text: 'Hello $displayName, '), // Username
+                const TextSpan(text: 'Hello  '), // Username
                 TextSpan(
                   text: greeting, // Bold Greeting
                   style: const TextStyle(fontWeight: FontWeight.bold),

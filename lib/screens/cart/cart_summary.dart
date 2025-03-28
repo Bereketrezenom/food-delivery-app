@@ -1,3 +1,6 @@
+import 'package:auth_demo/models/dishmodel.dart';
+import 'package:auth_demo/models/orderservices.dart';
+import 'package:auth_demo/screens/homescreen/home.dart';
 import 'package:flutter/material.dart';
 
 class CartSummary extends StatelessWidget {
@@ -5,6 +8,7 @@ class CartSummary extends StatelessWidget {
   final double shippingFee;
   final double total;
   final VoidCallback onCheckout;
+  final List<Dish> cartItems;
 
   const CartSummary({
     Key? key,
@@ -12,6 +16,7 @@ class CartSummary extends StatelessWidget {
     required this.shippingFee,
     required this.total,
     required this.onCheckout,
+    required this.cartItems,
   }) : super(key: key);
 
   @override
@@ -32,7 +37,30 @@ class CartSummary extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const FoodDeliveryHomePage(name: '', greeting: ''),
+                    ));
+              },
+              style: ElevatedButton.styleFrom(
+                elevation: 5, // Adjust the elevation height
+                shadowColor: Colors.orange, // Change shadow color
+                backgroundColor: const Color.fromARGB(
+                    255, 255, 174, 0), // Change button background color
+              ),
+              child: const Icon(
+                Icons.add,
+                color: Color.fromARGB(255, 41, 41, 41),
+              )),
+          const SizedBox(
+            height: 5,
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             decoration: BoxDecoration(
@@ -61,9 +89,9 @@ class CartSummary extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: onCheckout,
+              onPressed: () => _processCheckout(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: const Color.fromARGB(255, 255, 153, 0),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -74,13 +102,87 @@ class CartSummary extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange),
+                    color: Color.fromARGB(255, 0, 0, 0)),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _processCheckout(BuildContext context) {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Dialog(
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                ),
+                SizedBox(height: 20),
+                Text('Processing your order...'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    // Create the restaurant name based on items
+    // Usually we would get this from the restaurant object, but for simplicity
+    String restaurantName = 'Food Delivery';
+    if (cartItems.isNotEmpty) {
+      restaurantName = cartItems.first.restaurantName;
+    }
+
+    // Process the order with a delay to simulate network request
+    Future.delayed(const Duration(seconds: 1), () {
+      final OrderService orderService = OrderService();
+
+      // Place the order and get the order object
+      final order = orderService.placeOrder(
+        items: List.from(cartItems),
+        subtotal: subtotal,
+        shippingFee: shippingFee,
+        total: total,
+        restaurantName: restaurantName,
+      );
+
+      // Close the loading dialog
+      Navigator.pop(context);
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Order placed successfully! Order ID: ${order.id}'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      // Call the onCheckout callback
+      onCheckout();
+
+      // Navigate to order page (via home page with selectedIndex 2)
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const FoodDeliveryHomePage(
+            name: '',
+            greeting: '',
+            initialTabIndex: 1, // Order tab index
+          ),
+        ),
+        (route) => false, // Remove all previous routes
+      );
+    });
   }
 
   Widget _buildPriceRow(String label, double amount, {bool isTotal = false}) {
@@ -96,7 +198,7 @@ class CartSummary extends StatelessWidget {
           ),
         ),
         Text(
-          '\$${amount.toStringAsFixed(2)}',
+          '\$${amount.toStringAsFixed(2)}', //
           style: TextStyle(
             fontSize: isTotal ? 16 : 14,
             fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,

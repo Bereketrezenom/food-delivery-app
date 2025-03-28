@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:auth_demo/models/dishmodel.dart';
+import 'package:flutter/material.dart';
 
 class CartItemCard extends StatelessWidget {
   final Dish dish;

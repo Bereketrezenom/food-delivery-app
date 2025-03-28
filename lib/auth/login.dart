@@ -98,6 +98,11 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 children: [
                   SizedBox(height: constraints.maxHeight * 0.1),
+                  Image.asset(
+                    "assets/images/food.jpg",
+                    width: 200,
+                    height: 200,
+                  ),
                   SizedBox(height: constraints.maxHeight * 0.1),
                   Text(
                     "Sign In",

@@ -1,7 +1,8 @@
+import 'package:auth_demo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:auth_demo/main.dart'; // Replace with the correct import path
+// Replace with the correct import path
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
