@@ -14,6 +14,7 @@ class Dish {
   final String distance;
   final String size;
   int quantity;
+  final String category; // New category field
 
   Dish({
     required this.id,
@@ -30,6 +31,7 @@ class Dish {
     required this.distance,
     required this.size,
     this.quantity = 1,
+    required this.category, // Initialize category
   });
 
   Dish copyWith({int? quantity}) {
@@ -48,6 +50,7 @@ class Dish {
       distance: distance,
       size: size,
       quantity: quantity ?? this.quantity,
+      category: category,
     );
   }
 }
@@ -73,6 +76,7 @@ List<Dish> demoDishes = [
     restaurantName: 'Rose Garden Kitchen',
     distance: '4 km',
     size: '',
+    category: '',
   ),
   Dish(
     id: 2,
@@ -93,6 +97,7 @@ List<Dish> demoDishes = [
     restaurantName: 'Rose Garden Kitchen',
     distance: '3 km',
     size: '',
+    category: '',
   ),
 ];
 List<Dish> cartItems = [];

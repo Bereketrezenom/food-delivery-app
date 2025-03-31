@@ -1,6 +1,10 @@
 import 'package:auth_demo/home/autowrapper.dart';
 import 'package:auth_demo/providers/cart_provider.dart';
 import 'package:auth_demo/screens/details/dishdetal.dart';
+import 'package:auth_demo/screens/drawer/menu/menu.dart';
+import 'package:auth_demo/screens/drawer/setting.dart';
+import 'package:auth_demo/screens/homescreen/home.dart';
+import 'package:auth_demo/screens/order/order.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -101,6 +105,15 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const AuthWrapper(),
         DishDetailsScreen.routeName: (context) => const DishDetailsScreen(),
+        '/home': (context) => const FoodDeliveryHomePage(
+              name: 'User',
+              greeting: 'Welcome back',
+            ),
+        '/menu': (context) => const MenuPage(),
+        '/order': (context) => const OrderPage(),
+        '/settings': (context) => const SettingsPage(),
+        '/login': (context) =>
+            const Scaffold(body: Center(child: Text('Login Page'))),
       },
       onGenerateRoute: (settings) {
         return MaterialPageRoute(

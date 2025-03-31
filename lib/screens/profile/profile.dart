@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'package:auth_demo/auth/login.dart';
+import 'package:auth_demo/screens/drawer/appdrawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -20,8 +24,11 @@ class _ProfilePageState extends State<ProfilePage> {
   // User data
   String _userName = '';
   String _userEmail = '';
-  String? _userPhotoUrl;
+  String? _userPhotoUrl; // Firestore photo URL
   String _userPhoneNumber = '';
+
+  File? _selectedImage; // Temporary selected image file
+  File? _savedImage; // Locally saved image file (persisted)
 
   @override
   void initState() {
@@ -67,12 +74,59 @@ class _ProfilePageState extends State<ProfilePage> {
           _isLoading = false;
         });
       }
+
+      // Load locally saved image if it exists
+      final directory = await getApplicationDocumentsDirectory();
+      final savedImagePath = '${directory.path}/profile_picture.png';
+      if (await File(savedImagePath).exists()) {
+        setState(() {
+          _savedImage = File(savedImagePath);
+        });
+      }
     } catch (e) {
       setState(() {
         _isLoading = false;
         _errorMessage = 'Failed to load user data: ${e.toString()}';
       });
     }
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path); // Update the temporary image
+      });
+    }
+  }
+
+  Future<void> _saveImage() async {
+    if (_selectedImage == null) {
+      return; // No image to save
+    }
+
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final savedImagePath = '${directory.path}/profile_picture.png';
+      await _selectedImage!.copy(savedImagePath);
+
+      setState(() {
+        _savedImage = File(savedImagePath); // Update the saved image
+        _selectedImage = null; // Clear the temporary image
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save image: ${e.toString()}')),
+      );
+    }
+  }
+
+  void _cancelImage() {
+    setState(() {
+      _selectedImage = null; // Discard the temporary image
+    });
   }
 
   Future<void> _logout() async {
@@ -98,6 +152,13 @@ class _ProfilePageState extends State<ProfilePage> {
         title: const Text('Profile'),
         backgroundColor: const Color.fromRGBO(255, 109, 12, 1),
         foregroundColor: Colors.white,
+      ),
+      drawer: AppDrawer(
+        username: _userName,
+        email: _userEmail,
+        profilePicturePath: _savedImage?.path,
+        profilePictureUrl: _userPhotoUrl,
+        onLogout: _logout,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -131,17 +192,58 @@ class _ProfilePageState extends State<ProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Profile image
-            CircleAvatar(
-              radius: 60,
-              backgroundColor: Colors.grey[200],
-              backgroundImage:
-                  _userPhotoUrl != null && _userPhotoUrl!.isNotEmpty
-                      ? NetworkImage(_userPhotoUrl!)
-                      : null,
-              child: _userPhotoUrl == null || _userPhotoUrl!.isEmpty
-                  ? const Icon(Icons.person, size: 60, color: Colors.grey)
-                  : null,
+            GestureDetector(
+              onTap: _pickImage,
+              child: CircleAvatar(
+                radius: 60,
+                backgroundColor: Colors.grey[200],
+                backgroundImage: _selectedImage != null
+                    ? FileImage(_selectedImage!)
+                    : _savedImage != null
+                        ? FileImage(_savedImage!)
+                        : _userPhotoUrl != null && _userPhotoUrl!.isNotEmpty
+                            ? NetworkImage(_userPhotoUrl!)
+                            : const AssetImage('assets/images/placeholder.png')
+                                as ImageProvider<Object>,
+                child: _selectedImage == null &&
+                        _savedImage == null &&
+                        (_userPhotoUrl == null || _userPhotoUrl!.isEmpty)
+                    ? const Icon(Icons.person, size: 60, color: Colors.grey)
+                    : null,
+              ),
             ),
+
+            const SizedBox(height: 8),
+
+            // Edit profile picture text
+            TextButton(
+              onPressed: _pickImage,
+              child: const Text(
+                'Edit Profile Picture',
+                style: TextStyle(
+                  color: Color.fromRGBO(255, 109, 12, 1),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
+            if (_selectedImage != null) ...[
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: _saveImage,
+                    child: const Text('Save'),
+                  ),
+                  const SizedBox(width: 16),
+                  OutlinedButton(
+                    onPressed: _cancelImage,
+                    child: const Text('Cancel'),
+                  ),
+                ],
+              ),
+            ],
 
             const SizedBox(height: 24),
 
@@ -179,16 +281,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
             const SizedBox(height: 32),
 
-            // Profile information section
-            const Divider(),
-
-            _buildProfileInfoItem(Icons.email, 'Email', _userEmail),
-            _buildProfileInfoItem(Icons.person, 'Name', _userName),
-            if (_userPhoneNumber.isNotEmpty)
-              _buildProfileInfoItem(Icons.phone, 'Phone', _userPhoneNumber),
-
-            const SizedBox(height: 32),
-
             // Log out button
             ElevatedButton.icon(
               onPressed: () {
@@ -212,36 +304,6 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildProfileInfoItem(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Icon(icon, color: const Color.fromRGBO(255, 109, 12, 1)),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
-              ),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

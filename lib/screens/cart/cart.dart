@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:auth_demo/models/dishmodel.dart';
 import 'package:auth_demo/screens/cart/cart_summary.dart';
 import 'package:auth_demo/screens/cart/cartitemcard.dart';
+
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
 

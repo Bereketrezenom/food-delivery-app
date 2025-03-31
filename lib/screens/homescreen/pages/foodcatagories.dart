@@ -1,3 +1,4 @@
+import 'package:auth_demo/screens/drawer/menu/menu_catagories.dart';
 import 'package:flutter/material.dart';
 
 class FoodCategories extends StatefulWidget {
@@ -29,6 +30,13 @@ class _FoodCategoriesState extends State<FoodCategories> {
                     setState(() {
                       _selectedIndex = 0;
                     });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CategoryDetailPage(category: "burgers"),
+                      ),
+                    );
                   },
                 ),
                 const SizedBox(width: 20), // Space between cards
@@ -41,6 +49,13 @@ class _FoodCategoriesState extends State<FoodCategories> {
                     setState(() {
                       _selectedIndex = 1;
                     });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CategoryDetailPage(category: "pizza"),
+                      ),
+                    );
                   },
                 ),
                 const SizedBox(width: 20), // Space between cards
