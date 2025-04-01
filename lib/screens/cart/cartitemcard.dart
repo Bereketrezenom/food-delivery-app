@@ -5,13 +5,14 @@ class CartItemCard extends StatelessWidget {
   final Dish dish;
   final VoidCallback onIncrementQuantity;
   final VoidCallback onDecrementQuantity;
+  final VoidCallback onDelete;
 
   const CartItemCard({
     Key? key,
     required this.dish,
     required this.onIncrementQuantity,
     required this.onDecrementQuantity,
-    required void Function() onDelete,
+    required this.onDelete,
   }) : super(key: key);
 
   @override
@@ -31,6 +32,7 @@ class CartItemCard extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // Food Image
           Container(
             width: 60,
             height: 60,
@@ -43,6 +45,7 @@ class CartItemCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 16),
+          // Food Details
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,6 +68,7 @@ class CartItemCard extends StatelessWidget {
               ],
             ),
           ),
+          // Price and Quantity Controls
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -100,12 +104,18 @@ class CartItemCard extends StatelessWidget {
               ),
             ],
           ),
+          // Delete Icon
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: onDelete,
+          ),
         ],
       ),
     );
   }
 }
 
+// Quantity Button Widget
 class _QuantityButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;

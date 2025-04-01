@@ -34,7 +34,7 @@ class _FoodCategoriesState extends State<FoodCategories> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            CategoryDetailPage(category: "burgers"),
+                            const CategoryDetailPage(category: "burgers"),
                       ),
                     );
                   },
@@ -53,7 +53,7 @@ class _FoodCategoriesState extends State<FoodCategories> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            CategoryDetailPage(category: "pizza"),
+                            const CategoryDetailPage(category: "pizza"),
                       ),
                     );
                   },

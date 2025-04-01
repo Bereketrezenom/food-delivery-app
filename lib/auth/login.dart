@@ -1,10 +1,10 @@
+import 'package:auth_demo/Admin/adminpage.dart';
 import 'package:auth_demo/auth/forgotpassword.dart';
 import 'package:auth_demo/auth/register.dart';
 import 'package:auth_demo/screens/homescreen/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// For formatting time
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -39,15 +39,23 @@ class _LoginPageState extends State<LoginPage> {
           String userName = doc['name'] ?? 'User';
           String greeting = _getGreeting();
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FoodDeliveryHomePage(
-                name: userName,
-                greeting: greeting, // Pass the greeting
+          // Check if the user is an admin
+          if (_emailController.text.trim() == "bereketba49@gmail.com") {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const AdminPage()),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FoodDeliveryHomePage(
+                  name: userName,
+                  greeting: greeting,
+                ),
               ),
-            ),
-          );
+            );
+          }
         } else {
           _showErrorDialog('User document not found');
         }
