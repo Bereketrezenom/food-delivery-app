@@ -129,7 +129,7 @@ class SectionTitle extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: const TextStyle( 
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.black,
