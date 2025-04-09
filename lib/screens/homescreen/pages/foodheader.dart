@@ -1,13 +1,10 @@
-import 'package:auth_demo/models/dishmodel.dart';
 import 'package:auth_demo/screens/cart/cart.dart';
-import 'package:auth_demo/screens/cart/cartservices.dart';
-import 'package:auth_demo/screens/details/additionaldetail.dart';
-import 'package:auth_demo/screens/details/dishdetal.dart';
-import 'package:auth_demo/screens/details/dishdiscription.dart';
-import 'package:auth_demo/screens/details/dishimage.dart';
-import 'package:auth_demo/screens/details/top_rounded_container.dart';
+import 'package:auth_demo/screens/home/home.dart';
+import 'package:auth_demo/screens/homescreen/home.dart' show FoodDeliveryHomePage;
 import 'package:auth_demo/screens/homescreen/pages/searchfield.dart';
-import 'package:flutter/material.dart';
+import 'package:auth_demo/screens/order/order.dart';
+import 'package:auth_demo/screens/cash/cash.dart';
+import 'package:auth_demo/screens/profile/profile.dart';
 import 'package:flutter/material.dart';
 
 class FoodHeader extends StatelessWidget {
@@ -42,7 +39,61 @@ class FoodHeader extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Scaffold.of(context).openDrawer();
+                      // Open a modal bottom sheet to show menu options
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListTile(
+                                leading: Icon(Icons.home),
+                                title: Text("Home"),
+                                onTap: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const FoodDeliveryHomePage(greeting: '', name: '',)),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.list),
+                                title: Text("Order"),
+                                onTap: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => OrderPage()),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.payment),
+                                title: Text("Cart"),
+                                onTap: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => CartScreen()),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.account_circle),
+                                title: Text("Profile"),
+                                onTap: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProfilePage()),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.all(8),
@@ -50,8 +101,7 @@ class FoodHeader extends StatelessWidget {
                         shape: BoxShape.circle,
                         color: Colors.grey.shade200,
                       ),
-                      child:
-                          const Icon(Icons.menu, size: 24, color: Colors.black),
+                      child: const Icon(Icons.menu, size: 24, color: Colors.black),
                     ),
                   ),
                   const SizedBox(width: 28),
@@ -85,14 +135,42 @@ class FoodHeader extends StatelessWidget {
               ),
               Stack(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey.shade200,
+                  GestureDetector(
+                    onTap: () {
+                      // Notification icon tapped, implement your desired functionality
+                      // For example, opening a new screen or showing a modal with notifications
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListTile(
+                                leading: Icon(Icons.notifications),
+                                title: Text("Notification 1"),
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.notifications),
+                                title: Text("Notification 2"),
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.notifications),
+                                title: Text("Notification 3"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey.shade200,
+                      ),
+                      child: const Icon(Icons.notifications_outlined,
+                          size: 24, color: Colors.black),
                     ),
-                    child: const Icon(Icons.notifications_outlined,
-                        size: 24, color: Colors.black),
                   ),
                   Positioned(
                     right: 4,

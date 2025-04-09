@@ -67,7 +67,7 @@ class _FoodDeliveryHomePageState extends State<FoodDeliveryHomePage> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         selectedItemColor:
-            Colors.orange, // Set the selected item color to orange
+            const Color.fromARGB(255, 255, 0, 0), // Set the selected item color to orange
         unselectedItemColor:
             Colors.grey, // Set the unselected item color to grey
         type: BottomNavigationBarType
@@ -77,6 +77,7 @@ class _FoodDeliveryHomePageState extends State<FoodDeliveryHomePage> {
             icon: Icon(Icons.home),
             label: 'Home',
           ),
+          
           BottomNavigationBarItem(
             icon: Icon(Icons.restaurant_menu),
             label: 'Order',
@@ -136,7 +137,7 @@ class SectionTitle extends StatelessWidget {
         ),
         TextButton(
           onPressed: press,
-          style: TextButton.styleFrom(foregroundColor: Colors.orange),
+          style: TextButton.styleFrom(foregroundColor: const Color.fromARGB(255, 255, 0, 0)),
           child: const Text("See more"),
         ),
       ],

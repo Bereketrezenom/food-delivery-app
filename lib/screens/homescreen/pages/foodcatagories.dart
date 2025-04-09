@@ -99,12 +99,12 @@ class CategoryCard extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            height: 70, // Increased height to fill the space
+            height: 50, // Increased height to fill the space
             width: 180, // Adjusted width for better spacing
             decoration: BoxDecoration(
               color: isSelected
-                  ? Colors.orange
-                  : Colors.orange[50], // Orange when selected
+                  ? const Color.fromARGB(255, 242, 35, 35)
+                  : const Color.fromARGB(255, 255, 255, 255), 
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(

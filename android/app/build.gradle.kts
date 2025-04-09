@@ -11,7 +11,7 @@ android {
     namespace = "com.example.food_delivery"
     compileSdk = 35 // Change as per Flutter's compileSdkVersion
 
-    ndkVersion = "27.0.12077973" // Make sure this is the correct version
+    ndkVersion = "27.0.12077973" 
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -25,7 +25,7 @@ android {
     defaultConfig {
         applicationId = "com.example.food_delivery"
         minSdk = 23
-        targetSdk = 34 // Change to flutter.targetSdkVersion if needed
+        targetSdk = 34 
         versionCode = 1
         versionName = "1.0.0"
     }
