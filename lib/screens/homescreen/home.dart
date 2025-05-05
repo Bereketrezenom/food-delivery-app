@@ -29,19 +29,22 @@ class _FoodDeliveryHomePageState extends State<FoodDeliveryHomePage> {
   late int _selectedIndex;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // List of pages for each tab (home, order, profile)
+  late List<Widget> _pages;
+
   @override
   void initState() {
     super.initState();
     // Use the initialTabIndex if provided, otherwise default to 0 (home)
     _selectedIndex = widget.initialTabIndex;
-  }
 
-  // List of pages for each tab (home, order, profile)
-  final List<Widget> _pages = [
-    const HomePageContent(), // Home tab content
-    const OrderPage(), // Order tab content
-    const ProfilePage(), // Profile tab content
-  ];
+    // Initialize the pages list here
+    _pages = [
+      HomePageContent(username: widget.name), // Home tab content
+      const OrderPage(), // Order tab content
+      const ProfilePage(), // Profile tab content
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -127,21 +130,28 @@ class _FoodDeliveryHomePageState extends State<FoodDeliveryHomePage> {
   }
 }
 
+// Updated HomePageContent class in home.dart
+
 class HomePageContent extends StatelessWidget {
-  const HomePageContent({Key? key}) : super(key: key);
+  final String? username;
+
+  const HomePageContent({
+    Key? key,
+    this.username,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
         FoodHeader(
-          username: 'User', // Replace with actual username when implemented
+          username: username, // Pass the username directly
         ),
-        FoodCategories(),
-        FoodDiscountBanner(),
-        SizedBox(height: 20),
-        FeaturedDishes(),
-        SizedBox(height: 20),
+        const FoodCategories(),
+        const FoodDiscountBanner(),
+        const SizedBox(height: 20),
+        const FeaturedDishes(),
+        const SizedBox(height: 20),
       ],
     );
   }

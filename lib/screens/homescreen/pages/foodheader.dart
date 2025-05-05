@@ -1,3 +1,6 @@
+// lib/screens/homescreen/pages/food_header.dart
+
+import 'package:auth_demo/notifications/notificationwidget.dart';
 import 'package:auth_demo/screens/homescreen/pages/searchfield.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +23,10 @@ class FoodHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String greeting = _getGreeting();
+
+    // Use a default name if username is null or empty
+    String displayName =
+        (username != null && username!.isNotEmpty) ? username! : "User";
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -74,45 +81,24 @@ class FoodHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              Stack(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey.shade200,
-                    ),
-                    child: const Icon(Icons.notifications_outlined,
-                        size: 24, color: Colors.black),
-                  ),
-                  Positioned(
-                    right: 4,
-                    top: 4,
-                    child: Container(
-                      width: 10,
-                      height: 10,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.red,
-                        border: Border.all(color: Colors.white, width: 1),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // Replace the static notification icon with the interactive NotificationWidget
+              const NotificationWidget(),
             ],
           ),
 
           const SizedBox(height: 30),
 
-          // Updated Welcome Message in ONE LINE with Bold Greeting
+          // Updated Welcome Message with Username and Greeting
           RichText(
             text: TextSpan(
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Colors.black87,
                   ),
               children: [
-                const TextSpan(text: 'Hello  '), // Username
+                TextSpan(
+                  text: 'Hello ${capitalize(displayName)}, ',
+                  style: const TextStyle(fontWeight: FontWeight.w400),
+                ),
                 TextSpan(
                   text: greeting, // Bold Greeting
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -126,4 +112,9 @@ class FoodHeader extends StatelessWidget {
       ),
     );
   }
+}
+
+String capitalize(String name) {
+  if (name.isEmpty) return name;
+  return name[0].toUpperCase() + name.substring(1);
 }

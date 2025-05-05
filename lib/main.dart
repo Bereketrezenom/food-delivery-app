@@ -5,6 +5,7 @@ import 'package:auth_demo/screens/drawer/menu/menu.dart';
 import 'package:auth_demo/screens/drawer/setting.dart';
 import 'package:auth_demo/screens/homescreen/home.dart';
 import 'package:auth_demo/screens/order/order.dart';
+import 'package:auth_demo/search/searchprovider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
       ],
       child: const MyApp(),
     ),
