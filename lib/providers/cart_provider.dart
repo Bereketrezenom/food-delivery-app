@@ -1,5 +1,7 @@
+// providers/cart_provider.dart
 import 'package:auth_demo/models/dishmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CartProvider with ChangeNotifier {
   final List<Dish> _cartItems = [];

@@ -1,3 +1,4 @@
+// screens/profile/profile.dart
 import 'dart:io';
 import 'package:auth_demo/auth/login.dart';
 import 'package:auth_demo/screens/drawer/appdrawer.dart';
@@ -148,18 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: const Color.fromRGBO(255, 109, 12, 1),
-        foregroundColor: Colors.white,
-      ),
-      drawer: AppDrawer(
-        username: _userName,
-        email: _userEmail,
-        profilePicturePath: _savedImage?.path,
-        profilePictureUrl: _userPhotoUrl,
-        onLogout: _logout,
-      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage.isNotEmpty
@@ -180,131 +170,169 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 )
-              : _buildProfileContent(),
+              : SafeArea(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 32),
+                      // Profile image
+                      Center(
+                        child: GestureDetector(
+                          onTap: _pickImage,
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.grey[300],
+                            backgroundImage: _getProfileImageProvider(),
+                            child: (_selectedImage == null &&
+                                    _savedImage == null &&
+                                    (_userPhotoUrl == null ||
+                                        _userPhotoUrl!.isEmpty))
+                                ? const Icon(Icons.person,
+                                    size: 50, color: Colors.orange)
+                                : null,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        _userName,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 32),
+                      Expanded(
+                        child: ListView(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          children: [
+                            _buildProfileTile(
+                              icon: Icons.person_outline,
+                              text: 'My Account',
+                              onTap: () => _showAccountDialog(context),
+                            ),
+                            _buildProfileTile(
+                              icon: Icons.notifications_none,
+                              text: 'Notifications',
+                              onTap: () {}, // Placeholder
+                            ),
+                            _buildProfileTile(
+                              icon: Icons.settings_outlined,
+                              text: 'Settings',
+                              onTap: () {
+                                Navigator.pushNamed(context, '/settings');
+                              },
+                            ),
+                            _buildProfileTile(
+                              icon: Icons.help_outline,
+                              text: 'Help Center',
+                              onTap: () {}, // Placeholder
+                            ),
+                            _buildProfileTile(
+                              icon: Icons.logout,
+                              text: 'Log Out',
+                              onTap: _logout,
+                              color: Colors.red,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
     );
   }
 
-  Widget _buildProfileContent() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+  Widget _buildProfileTile(
+      {required IconData icon,
+      required String text,
+      required VoidCallback onTap,
+      Color? color}) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: ListTile(
+        leading: Icon(icon, color: color ?? Colors.orange),
+        title: Text(
+          text,
+          style: TextStyle(
+            color: color ?? Theme.of(context).textTheme.bodyLarge?.color,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        trailing:
+            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.orange),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  void _showAccountDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Profile image
-            GestureDetector(
-              onTap: _pickImage,
-              child: CircleAvatar(
-                radius: 60,
-                backgroundColor: Colors.grey[200],
-                backgroundImage: _selectedImage != null
-                    ? FileImage(_selectedImage!)
-                    : _savedImage != null
-                        ? FileImage(_savedImage!)
-                        : _userPhotoUrl != null && _userPhotoUrl!.isNotEmpty
-                            ? NetworkImage(_userPhotoUrl!)
-                            : const AssetImage('assets/images/placeholder.png')
-                                as ImageProvider<Object>,
-                child: _selectedImage == null &&
-                        _savedImage == null &&
-                        (_userPhotoUrl == null || _userPhotoUrl!.isEmpty)
-                    ? const Icon(Icons.person, size: 60, color: Colors.grey)
-                    : null,
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            // Edit profile picture text
-            TextButton(
-              onPressed: _pickImage,
-              child: const Text(
-                'Edit Profile Picture',
-                style: TextStyle(
-                  color: Color.fromRGBO(255, 109, 12, 1),
-                  fontWeight: FontWeight.bold,
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
-
-            if (_selectedImage != null) ...[
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: _saveImage,
-                    child: const Text('Save'),
-                  ),
-                  const SizedBox(width: 16),
-                  OutlinedButton(
-                    onPressed: _cancelImage,
-                    child: const Text('Cancel'),
-                  ),
-                ],
-              ),
-            ],
-
-            const SizedBox(height: 24),
-
-            // User name
-            Text(
-              _userName,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            // User email
-            Text(
-              _userEmail,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-
-            if (_userPhoneNumber.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              // Phone number
-              Text(
-                _userPhoneNumber,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-
-            const SizedBox(height: 32),
-
-            // Log out button
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ),
-                );
+            Text('Account',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Edit Profile'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () {
+                // Navigate to edit profile page
               },
-              icon: const Icon(Icons.logout),
-              label: const Text('Log Out'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromRGBO(255, 109, 12, 1),
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.password),
+              title: const Text('Change Password'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () {
+                // Navigate to change password page
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.payment),
+              title: const Text('Payment Methods'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () {
+                // Navigate to payment methods page
+              },
             ),
           ],
         ),
       ),
     );
+  }
+
+  ImageProvider<Object>? _getProfileImageProvider() {
+    if (_selectedImage != null) {
+      return FileImage(_selectedImage!);
+    } else if (_savedImage != null) {
+      return FileImage(_savedImage!);
+    } else if (_userPhotoUrl != null && _userPhotoUrl!.isNotEmpty) {
+      return NetworkImage(_userPhotoUrl!);
+    }
+    return null;
   }
 }

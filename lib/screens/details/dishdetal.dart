@@ -1,10 +1,13 @@
+// screens/details/dishdetal.dart
 import 'package:auth_demo/models/dishmodel.dart';
+import 'package:auth_demo/providers/cart_provider.dart';
 import 'package:auth_demo/screens/cart/cart.dart';
 import 'package:auth_demo/screens/cart/cartservices.dart';
 import 'package:auth_demo/screens/details/dishdiscription.dart';
 import 'package:auth_demo/screens/details/dishimage.dart';
 import 'package:auth_demo/screens/details/top_rounded_container.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class DishDetailsScreen extends StatelessWidget {
   static const routeName = '/dish-details';
@@ -72,10 +75,10 @@ class DishDetailsScreen extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              // ✅ Add dish to cart before navigating
-              CartService().addToCart(dish);
+              // Add dish to cart using CartProvider
+              Provider.of<CartProvider>(context, listen: false).addToCart(dish);
 
-              // ✅ Navigate to cart screen (NO EMPTY LIST!)
+              // Navigate to cart screen
               Navigator.push(
                 context,
                 MaterialPageRoute(

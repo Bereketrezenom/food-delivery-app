@@ -1,4 +1,4 @@
-import 'package:auth_demo/models/dishmodel.dart';
+// screens/homescreen/pages/searchfield.dart
 import 'package:auth_demo/screens/details/dishdetal.dart';
 import 'package:auth_demo/search/searchprovider.dart';
 import 'package:flutter/material.dart';
@@ -24,9 +24,11 @@ class SearchField extends StatelessWidget {
                       },
                       decoration: InputDecoration(
                         filled: true,
-                        hintStyle: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                        hintStyle: const TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0)),
                         fillColor: const Color.fromARGB(255, 255, 255, 255),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -44,7 +46,8 @@ class SearchField extends StatelessWidget {
                           padding: EdgeInsets.all(8.0),
                           child: CircleAvatar(
                             backgroundColor: Color.fromARGB(255, 255, 255, 255),
-                            child: Icon(Icons.search, color: Color.fromARGB(255, 0, 0, 0)),
+                            child: Icon(Icons.search,
+                                color: Color.fromARGB(255, 0, 0, 0)),
                           ),
                         ),
                         suffixIcon: searchProvider.isSearching
@@ -67,7 +70,8 @@ class SearchField extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
-                    icon: const Icon(Icons.tune, color: Color.fromARGB(255, 0, 0, 0)),
+                    icon: const Icon(Icons.tune,
+                        color: Color.fromARGB(255, 0, 0, 0)),
                     onPressed: () {
                       searchProvider.toggleFilters();
                     },
@@ -75,7 +79,7 @@ class SearchField extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             // Advanced Filters
             if (searchProvider.showFilters)
               Container(
@@ -104,7 +108,7 @@ class SearchField extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    
+
                     // Price Range Filter
                     const Text(
                       'Price Range',
@@ -171,9 +175,9 @@ class SearchField extends StatelessWidget {
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Category Filter
                     const Text(
                       'Category',
@@ -191,7 +195,8 @@ class SearchField extends StatelessWidget {
                       ),
                       hint: const Text('Select Category'),
                       value: searchProvider.selectedCategory,
-                      items: ['Burgers', 'Pizza', 'Burrito', 'Sandwich', 'BBQ'].map((category) {
+                      items: ['Burgers', 'Pizza', 'Burrito', 'Sandwich', 'BBQ']
+                          .map((category) {
                         return DropdownMenuItem(
                           value: category,
                           child: Text(category),
@@ -201,9 +206,9 @@ class SearchField extends StatelessWidget {
                         searchProvider.setCategory(value);
                       },
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Rating Filter
                     const Text(
                       'Minimum Rating',
@@ -231,9 +236,9 @@ class SearchField extends StatelessWidget {
                         searchProvider.setMinRating(value);
                       },
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Reset Filters Button
                     ElevatedButton(
                       onPressed: () {
@@ -251,9 +256,10 @@ class SearchField extends StatelessWidget {
                   ],
                 ),
               ),
-            
+
             // Search History
-            if (!searchProvider.isSearching && searchProvider.searchHistory.isNotEmpty)
+            if (!searchProvider.isSearching &&
+                searchProvider.searchHistory.isNotEmpty)
               Container(
                 margin: const EdgeInsets.only(top: 8),
                 padding: const EdgeInsets.all(12),
@@ -291,25 +297,28 @@ class SearchField extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    ...searchProvider.searchHistory.map((query) => ListTile(
-                      leading: const Icon(Icons.history),
-                      title: Text(query),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          searchProvider.removeFromSearchHistory(query);
-                        },
-                      ),
-                      onTap: () {
-                        searchProvider.search(query, []);
-                      },
-                    )).toList(),
+                    ...searchProvider.searchHistory
+                        .map((query) => ListTile(
+                              leading: const Icon(Icons.history),
+                              title: Text(query),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  searchProvider.removeFromSearchHistory(query);
+                                },
+                              ),
+                              onTap: () {
+                                searchProvider.search(query, []);
+                              },
+                            ))
+                        .toList(),
                   ],
                 ),
               ),
-            
+
             // Search Results
-            if (searchProvider.isSearching && searchProvider.searchResults.isNotEmpty)
+            if (searchProvider.isSearching &&
+                searchProvider.searchResults.isNotEmpty)
               Container(
                 margin: const EdgeInsets.only(top: 8),
                 padding: const EdgeInsets.all(8),
@@ -326,29 +335,32 @@ class SearchField extends StatelessWidget {
                   ],
                 ),
                 child: Column(
-                  children: searchProvider.searchResults.map((dish) => ListTile(
-                    leading: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: NetworkImage(dish.image),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    title: Text(dish.name),
-                    subtitle: Text(dish.restaurantName),
-                    trailing: Text('\$${dish.price.toStringAsFixed(2)}'),
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        DishDetailsScreen.routeName,
-                        arguments: dish,
-                      );
-                    },
-                  )).toList(),
+                  children: searchProvider.searchResults
+                      .map((dish) => ListTile(
+                            leading: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                image: DecorationImage(
+                                  image: NetworkImage(dish.image),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            title: Text(dish.name),
+                            subtitle: Text(dish.restaurantName),
+                            trailing:
+                                Text('\$${dish.price.toStringAsFixed(2)}'),
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                DishDetailsScreen.routeName,
+                                arguments: dish,
+                              );
+                            },
+                          ))
+                      .toList(),
                 ),
               ),
           ],

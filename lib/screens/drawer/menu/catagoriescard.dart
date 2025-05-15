@@ -1,7 +1,9 @@
+// screens/drawer/menu/catagoriescard.dart
 import 'package:auth_demo/screens/cart/cart.dart';
-import 'package:auth_demo/screens/cart/cartservices.dart';
+import 'package:auth_demo/providers/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:auth_demo/models/dishmodel.dart';
+import 'package:provider/provider.dart';
 
 class CategoryItemCard extends StatelessWidget {
   final String name;
@@ -103,7 +105,8 @@ class CategoryItemCard extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () {
-                          CartService().addToCart(
+                          Provider.of<CartProvider>(context, listen: false)
+                              .addToCart(
                             Dish(
                               id: DateTime.now().millisecondsSinceEpoch,
                               name: name,
@@ -133,15 +136,15 @@ class CategoryItemCard extends StatelessWidget {
                           );
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(6),
+                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: Colors.orange,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(
-                            Icons.add,
-                            size: 18,
+                            Icons.add_shopping_cart,
                             color: Colors.white,
+                            size: 20,
                           ),
                         ),
                       ),

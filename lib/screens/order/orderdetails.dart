@@ -1,3 +1,4 @@
+// screens/order/orderdetails.dart
 import 'package:auth_demo/models/ordermodel.dart';
 import 'package:auth_demo/screens/order/orderitem.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,11 @@ class OrderDetailsScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
+            // Delivery Information
+            _buildDeliveryInfo(),
+
+            const SizedBox(height: 24),
+
             // Order Items
             _buildOrderItemsList(),
 
@@ -39,11 +45,6 @@ class OrderDetailsScreen extends StatelessWidget {
 
             // Price Details
             _buildPriceDetails(),
-
-            const SizedBox(height: 24),
-
-            // Delivery Information
-            _buildDeliveryInfo(),
           ],
         ),
       ),
@@ -319,42 +320,87 @@ class OrderDetailsScreen extends StatelessWidget {
           ),
           child: Column(
             children: [
-              _buildInfoRow(
-                  Icons.location_on, 'Delivery Address', order.deliveryAddress),
-              const SizedBox(height: 16),
-              _buildInfoRow(Icons.access_time, 'Estimated Delivery Time',
-                  order.estimatedDeliveryTime),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, color: Colors.orange, size: 20),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.location_on,
+                      color: Colors.orange,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Delivery Address',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          order.deliveryAddress ??
+                              'No delivery address provided',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.access_time,
+                      color: Colors.blue,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Estimated Delivery Time',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          order.estimatedDeliveryTime,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

@@ -1,3 +1,4 @@
+// screens/drawer/appdrawer.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 
@@ -80,47 +81,27 @@ class _AppDrawerState extends State<AppDrawer> {
       decoration: const BoxDecoration(
         color: Colors.orange,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.white,
-            backgroundImage: widget.profilePicturePath != null
-                ? FileImage(File(widget.profilePicturePath!))
-                    as ImageProvider<Object>?
-                : widget.profilePictureUrl != null &&
-                        widget.profilePictureUrl!.isNotEmpty
-                    ? NetworkImage(widget.profilePictureUrl!)
-                    : null,
-            child: widget.profilePicturePath == null &&
-                    (widget.profilePictureUrl == null ||
-                        widget.profilePictureUrl!.isEmpty)
-                ? const Icon(
-                    Icons.person,
-                    size: 40,
-                    color: Colors.orange,
-                  )
-                : null,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            widget.username ?? 'Welcome',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            widget.email,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
-          ),
-        ],
+      child: Center(
+        child: CircleAvatar(
+          radius: 40,
+          backgroundColor: Colors.white,
+          backgroundImage: widget.profilePicturePath != null
+              ? FileImage(File(widget.profilePicturePath!))
+                  as ImageProvider<Object>?
+              : widget.profilePictureUrl != null &&
+                      widget.profilePictureUrl!.isNotEmpty
+                  ? NetworkImage(widget.profilePictureUrl!)
+                  : null,
+          child: widget.profilePicturePath == null &&
+                  (widget.profilePictureUrl == null ||
+                      widget.profilePictureUrl!.isEmpty)
+              ? const Icon(
+                  Icons.person,
+                  size: 50,
+                  color: Colors.orange,
+                )
+              : null,
+        ),
       ),
     );
   }

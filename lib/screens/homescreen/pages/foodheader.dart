@@ -1,12 +1,50 @@
-// lib/screens/homescreen/pages/food_header.dart
+// screens/homescreen/pages/foodheader.dart
 
 import 'package:auth_demo/notifications/notificationwidget.dart';
 import 'package:auth_demo/screens/homescreen/pages/searchfield.dart';
+import 'package:auth_demo/services/locations/locationpicker.dart';
+import 'package:auth_demo/services/locations/locationservies.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
+// adjust path
 
-class FoodHeader extends StatelessWidget {
+class FoodHeader extends StatefulWidget {
   final String? username;
   const FoodHeader({super.key, this.username});
+
+  @override
+  State<FoodHeader> createState() => _FoodHeaderState();
+}
+
+class _FoodHeaderState extends State<FoodHeader> {
+  String? _deliveryAddress;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDeliveryAddress();
+  }
+
+  Future<void> _loadDeliveryAddress() async {
+    final address = await LocationService().getSavedDeliveryAddress();
+    if (mounted) {
+      setState(() {
+        _deliveryAddress = address;
+      });
+    }
+  }
+
+  void _showLocationPicker() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LocationPickerMap()),
+    );
+    if (result != null && result is String) {
+      setState(() {
+        _deliveryAddress = result;
+      });
+    }
+  }
 
   // Function to determine the greeting based on time
   String _getGreeting() {
@@ -26,7 +64,9 @@ class FoodHeader extends StatelessWidget {
 
     // Use a default name if username is null or empty
     String displayName =
-        (username != null && username!.isNotEmpty) ? username! : "User";
+        (widget.username != null && widget.username!.isNotEmpty)
+            ? widget.username!
+            : "User";
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -53,10 +93,10 @@ class FoodHeader extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 28),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Delivered to',
                         style: TextStyle(
                           fontSize: 14,
@@ -64,18 +104,21 @@ class FoodHeader extends StatelessWidget {
                           color: Colors.red,
                         ),
                       ),
-                      Row(
-                        children: [
-                          Text(
-                            'Bole',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
+                      InkWell(
+                        onTap: _showLocationPicker,
+                        child: Row(
+                          children: [
+                            Text(
+                              _deliveryAddress ?? 'Select Location',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
                             ),
-                          ),
-                          Icon(Icons.keyboard_arrow_down, size: 20),
-                        ],
+                            const Icon(Icons.keyboard_arrow_down, size: 20),
+                          ],
+                        ),
                       ),
                     ],
                   ),

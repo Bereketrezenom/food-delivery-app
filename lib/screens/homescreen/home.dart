@@ -1,3 +1,4 @@
+// screens/homescreen/home.dart
 import 'package:auth_demo/screens/drawer/appdrawer.dart';
 import 'package:auth_demo/screens/homescreen/pages/banner.dart';
 import 'package:auth_demo/screens/homescreen/pages/dishcard.dart';
@@ -6,19 +7,23 @@ import 'package:auth_demo/screens/homescreen/pages/foodheader.dart';
 
 import 'package:auth_demo/screens/order/order.dart';
 import 'package:auth_demo/screens/profile/profile.dart';
+import 'package:auth_demo/screens/drawer/menu/menu.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class FoodDeliveryHomePage extends StatefulWidget {
   final String name;
   final String greeting;
   final int initialTabIndex;
+  final void Function(int)? onTabChanged;
 
   const FoodDeliveryHomePage({
     Key? key,
     required this.name,
     required this.greeting,
     this.initialTabIndex = 0,
+    this.onTabChanged,
   }) : super(key: key);
 
   @override
@@ -27,20 +32,17 @@ class FoodDeliveryHomePage extends StatefulWidget {
 
 class _FoodDeliveryHomePageState extends State<FoodDeliveryHomePage> {
   late int _selectedIndex;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // List of pages for each tab (home, order, profile)
+  // List of pages for each tab (home, menu, order, profile)
   late List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
-    // Use the initialTabIndex if provided, otherwise default to 0 (home)
     _selectedIndex = widget.initialTabIndex;
-
-    // Initialize the pages list here
     _pages = [
       HomePageContent(username: widget.name), // Home tab content
+      const MenuPage(), // Menu tab content
       const OrderPage(), // Order tab content
       const ProfilePage(), // Profile tab content
     ];
@@ -48,7 +50,7 @@ class _FoodDeliveryHomePageState extends State<FoodDeliveryHomePage> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index; // Update the selected tab index
+      _selectedIndex = index;
     });
   }
 
@@ -79,52 +81,47 @@ class _FoodDeliveryHomePageState extends State<FoodDeliveryHomePage> {
     );
   }
 
-  void _openDrawer() {
-    _scaffoldKey.currentState?.openDrawer();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: AppDrawer(
-        username: widget.name,
-        email:
-            'user@example.com', // Replace with actual user email when available
-        onLogout: _handleLogout,
-      ),
-      body: SafeArea(
-        child: _selectedIndex == 0
-            ? SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: _pages[_selectedIndex], // Display home page with scroll
-              )
-            : _pages[
-                _selectedIndex], // Display other pages without scroll wrapper
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor:
-            Colors.orange, // Set the selected item color to orange
-        unselectedItemColor:
-            Colors.grey, // Set the unselected item color to grey
-        type: BottomNavigationBarType
-            .fixed, // Ensures all items are always visible
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant_menu),
-            label: 'Order',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Profile',
-          ),
-        ],
+    return WillPopScope(
+      onWillPop: () async {
+        SystemNavigator.pop();
+        return false;
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: _selectedIndex == 0
+              ? SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: _pages[_selectedIndex],
+                )
+              : _pages[_selectedIndex],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          selectedItemColor: Colors.orange,
+          unselectedItemColor: Colors.grey,
+          type: BottomNavigationBarType.fixed,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.menu_book),
+              label: 'Menu',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.receipt_long),
+              label: 'Order',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }

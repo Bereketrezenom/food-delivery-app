@@ -1,7 +1,6 @@
+// search/searchprovider.dart
 import 'package:auth_demo/models/dishmodel.dart';
-import 'package:auth_demo/screens/drawer/menu/menu_catagories.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // // Sample Dish Model
@@ -107,25 +106,25 @@ class SearchProvider extends ChangeNotifier {
   List<Dish> _getAllDishes() {
     // Get dishes from demoDishes
     List<Dish> allDishes = List.from(demoDishes);
-    
+
     // Get dishes from category items
     final categories = ['pizza', 'burgers', 'bbq'];
     for (final category in categories) {
       final categoryItems = _getCategoryItems(category);
       allDishes.addAll(categoryItems);
     }
-    
+
     // Remove duplicates based on id and name
     final uniqueDishes = <Dish>[];
     final seenIds = <int>{};
-    
+
     for (final dish in allDishes) {
       if (!seenIds.contains(dish.id)) {
         seenIds.add(dish.id);
         uniqueDishes.add(dish);
       }
     }
-    
+
     return uniqueDishes;
   }
 
@@ -240,13 +239,13 @@ class SearchProvider extends ChangeNotifier {
   void search(String query, List<Dish> allDishes) {
     _query = query.toLowerCase();
     _isSearching = query.isNotEmpty;
-    
+
     if (_query.isEmpty) {
       _searchResults = []; // Clear results if query is empty
     } else {
       // Get all available dishes
       final allAvailableDishes = _getAllDishes();
-      
+
       // Apply text search
       _searchResults = allAvailableDishes.where((dish) {
         return dish.name.toLowerCase().contains(_query) ||
@@ -257,21 +256,26 @@ class SearchProvider extends ChangeNotifier {
 
       // Apply price filter
       if (_minPrice != null) {
-        _searchResults = _searchResults.where((dish) => dish.price >= _minPrice!).toList();
+        _searchResults =
+            _searchResults.where((dish) => dish.price >= _minPrice!).toList();
       }
       if (_maxPrice != null) {
-        _searchResults = _searchResults.where((dish) => dish.price <= _maxPrice!).toList();
+        _searchResults =
+            _searchResults.where((dish) => dish.price <= _maxPrice!).toList();
       }
 
       // Apply category filter
       if (_selectedCategory != null && _selectedCategory!.isNotEmpty) {
-        _searchResults = _searchResults.where((dish) => 
-          dish.category.toLowerCase() == _selectedCategory!.toLowerCase()).toList();
+        _searchResults = _searchResults
+            .where((dish) =>
+                dish.category.toLowerCase() == _selectedCategory!.toLowerCase())
+            .toList();
       }
 
       // Apply rating filter
       if (_minRating != null) {
-        _searchResults = _searchResults.where((dish) => dish.rating >= _minRating!).toList();
+        _searchResults =
+            _searchResults.where((dish) => dish.rating >= _minRating!).toList();
       }
     }
 

@@ -1,3 +1,4 @@
+// screens/order/order.dart
 import 'package:auth_demo/models/ordermodel.dart';
 import 'package:auth_demo/models/orderservices.dart';
 import 'package:auth_demo/screens/order/orderdetails.dart';
@@ -225,6 +226,31 @@ class _OrderPageState extends State<OrderPage> {
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 8),
+
+            // Delivery Address
+            Row(
+              children: [
+                const Icon(
+                  Icons.location_on,
+                  size: 18,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    order.deliveryAddress ?? 'No delivery address',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black87,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

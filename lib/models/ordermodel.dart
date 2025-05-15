@@ -1,4 +1,6 @@
+// models/ordermodel.dart
 import 'package:auth_demo/models/dishmodel.dart';
+import 'package:path/path.dart' as p;
 
 enum OrderStatus {
   pending,
@@ -17,7 +19,7 @@ class Order {
   final double total;
   final OrderStatus status;
   final String restaurantName;
-  final String deliveryAddress;
+  final String? deliveryAddress;
   final String estimatedDeliveryTime;
 
   Order({
@@ -29,7 +31,7 @@ class Order {
     required this.total,
     this.status = OrderStatus.pending,
     required this.restaurantName,
-    required this.deliveryAddress,
+    this.deliveryAddress,
     required this.estimatedDeliveryTime,
   });
 

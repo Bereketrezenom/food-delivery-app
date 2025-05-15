@@ -1,7 +1,11 @@
+// screens/cart/cart_summary.dart
 import 'package:auth_demo/models/dishmodel.dart';
 import 'package:auth_demo/models/orderservices.dart';
+import 'package:auth_demo/providers/cart_provider.dart';
 import 'package:auth_demo/screens/homescreen/home.dart';
+import 'package:auth_demo/services/locations/locationservies.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CartSummary extends StatelessWidget {
   final double subtotal;
@@ -111,7 +115,23 @@ class CartSummary extends StatelessWidget {
     );
   }
 
-  void _processCheckout(BuildContext context) {
+  void _processCheckout(BuildContext context) async {
+    // Fetch the saved delivery address
+    String? deliveryAddress = await LocationService().getSavedDeliveryAddress();
+    print('Fetched delivery address: $deliveryAddress');
+
+    // Prevent checkout if no address is saved
+    if (deliveryAddress == null || deliveryAddress.trim().isEmpty) {
+      Navigator.pop(context); // Close loading dialog if open
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a delivery address before checkout.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     // Show loading indicator
     showDialog(
       context: context,
@@ -136,7 +156,6 @@ class CartSummary extends StatelessWidget {
     );
 
     // Create the restaurant name based on items
-    // Usually we would get this from the restaurant object, but for simplicity
     String restaurantName = 'Food Delivery';
     if (cartItems.isNotEmpty) {
       restaurantName = cartItems.first.restaurantName;
@@ -153,6 +172,7 @@ class CartSummary extends StatelessWidget {
         shippingFee: shippingFee,
         total: total,
         restaurantName: restaurantName,
+        deliveryAddress: deliveryAddress,
       );
 
       // Close the loading dialog
@@ -161,11 +181,14 @@ class CartSummary extends StatelessWidget {
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Order placed successfully! Order ID: ${order.id}'),
+          content: Text('Order placed successfully! Order ID: \\${order.id}'),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 2),
         ),
       );
+
+      // Clear the cart using CartProvider
+      Provider.of<CartProvider>(context, listen: false).clearCart();
 
       // Call the onCheckout callback
       onCheckout();

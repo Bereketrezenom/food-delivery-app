@@ -1,21 +1,66 @@
+// screens/profile/setting.dart
+import 'package:auth_demo/providers/theme_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  State<SettingsPage> createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String _userName = 'User';
+
+  bool _isLoading = true;
   bool _notificationsEnabled = true;
-  bool _darkModeEnabled = false;
   bool _locationEnabled = true;
   double _deliveryRadius = 10.0;
   String _selectedLanguage = 'English';
 
   @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser != null) {
+        final docSnapshot =
+            await _firestore.collection('login').doc(currentUser.uid).get();
+
+        if (docSnapshot.exists) {
+          setState(() {
+            String name = docSnapshot.data()?['name'] ?? 'User';
+            _userName = capitalize(name);
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  String capitalize(String name) {
+    if (name.isEmpty) return name;
+    return name[0].toUpperCase() + name.substring(1);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -41,46 +86,10 @@ class _SettingsPageState extends State<SettingsPage> {
               _buildSwitchTile(
                 title: 'Dark Mode',
                 subtitle: 'Change app appearance',
-                value: _darkModeEnabled,
+                value: themeProvider.isDarkMode,
                 onChanged: (value) {
-                  setState(() {
-                    _darkModeEnabled = value;
-                  });
+                  themeProvider.toggleTheme();
                 },
-              ),
-              _buildSwitchTile(
-                title: 'Location Services',
-                subtitle: 'Allow app to access your location',
-                value: _locationEnabled,
-                onChanged: (value) {
-                  setState(() {
-                    _locationEnabled = value;
-                  });
-                },
-              ),
-            ],
-          ),
-          _buildSettingsGroup(
-            title: 'Delivery Options',
-            children: [
-              ListTile(
-                title: const Text('Delivery Radius'),
-                subtitle: Text('${_deliveryRadius.round()} km'),
-                trailing: SizedBox(
-                  width: 150,
-                  child: Slider(
-                    activeColor: Colors.orange,
-                    value: _deliveryRadius,
-                    min: 1.0,
-                    max: 20.0,
-                    divisions: 19,
-                    onChanged: (value) {
-                      setState(() {
-                        _deliveryRadius = value;
-                      });
-                    },
-                  ),
-                ),
               ),
             ],
           ),
@@ -93,35 +102,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   _showLanguageDialog();
-                },
-              ),
-            ],
-          ),
-          _buildSettingsGroup(
-            title: 'Account',
-            children: [
-              ListTile(
-                leading: const Icon(Icons.person),
-                title: const Text('Edit Profile'),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {
-                  // Navigate to edit profile page
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.password),
-                title: const Text('Change Password'),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {
-                  // Navigate to change password page
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.payment),
-                title: const Text('Payment Methods'),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {
-                  // Navigate to payment methods page
                 },
               ),
             ],
@@ -173,33 +153,19 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           const SizedBox(width: 16),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'User Name',
-                  style: TextStyle(
+                  _isLoading ? 'Loading...' : _userName,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'user@example.com',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
+                )
               ],
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              // Navigate to edit profile
-            },
           ),
         ],
       ),

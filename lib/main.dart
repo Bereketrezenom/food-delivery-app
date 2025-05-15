@@ -1,8 +1,10 @@
+// main.dart
 import 'package:auth_demo/home/autowrapper.dart';
 import 'package:auth_demo/providers/cart_provider.dart';
+import 'package:auth_demo/providers/theme_provider.dart';
 import 'package:auth_demo/screens/details/dishdetal.dart';
 import 'package:auth_demo/screens/drawer/menu/menu.dart';
-import 'package:auth_demo/screens/drawer/setting.dart';
+import 'package:auth_demo/screens/profile/setting.dart';
 import 'package:auth_demo/screens/homescreen/home.dart';
 import 'package:auth_demo/screens/order/order.dart';
 import 'package:auth_demo/search/searchprovider.dart';
@@ -70,8 +72,40 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => SearchProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: const MyApp(),
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'Auth Demo',
+            debugShowCheckedModeBanner: false,
+            theme: themeProvider.currentTheme,
+            routes: {
+              '/': (context) => const AuthWrapper(),
+              DishDetailsScreen.routeName: (context) =>
+                  const DishDetailsScreen(),
+              '/home': (context) => const FoodDeliveryHomePage(
+                    name: 'User',
+                    greeting: 'Welcome back',
+                  ),
+              '/menu': (context) => const MenuPage(),
+              '/order': (context) => const OrderPage(),
+              '/settings': (context) => const SettingsPage(),
+              '/login': (context) =>
+                  const Scaffold(body: Center(child: Text('Login Page'))),
+            },
+            onGenerateRoute: (settings) {
+              return MaterialPageRoute(
+                builder: (context) => const Scaffold(
+                  body: Center(
+                    child: Text('Page not found!'),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     ),
   );
 }
@@ -91,41 +125,4 @@ void _handleMessage(RemoteMessage message) {
   // if (message.data['type'] == 'order_update') {
   //   Navigator.push(context, MaterialPageRoute(...));
   // }
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Auth Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
-      routes: {
-        '/': (context) => const AuthWrapper(),
-        DishDetailsScreen.routeName: (context) => const DishDetailsScreen(),
-        '/home': (context) => const FoodDeliveryHomePage(
-              name: 'User',
-              greeting: 'Welcome back',
-            ),
-        '/menu': (context) => const MenuPage(),
-        '/order': (context) => const OrderPage(),
-        '/settings': (context) => const SettingsPage(),
-        '/login': (context) =>
-            const Scaffold(body: Center(child: Text('Login Page'))),
-      },
-      onGenerateRoute: (settings) {
-        return MaterialPageRoute(
-          builder: (context) => const Scaffold(
-            body: Center(
-              child: Text('Page not found!'),
-            ),
-          ),
-        );
-      },
-    );
-  }
 }
